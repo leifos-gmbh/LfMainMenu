@@ -1,0 +1,45 @@
+//
+// Copyright (c) 2012 Leifos GmbH, GPL2, see docs/LICENSE
+//
+
+<!-- language file start -->
+featured_courses#:#Featured Courses
+nr#:#Nr
+add_item#:#Add Item
+really_delete#:#Do you really want to delete the following items?
+update_numbering#:#Update Ordering
+add_menu#:#Add Menu
+menus#:#Menus
+new_menu#:#New Menu
+menu_type#:#Menu Type
+menu_t_custom#:#Custom
+menu_t_pd#:#Personal Desktop
+menu_t_rep#:#Repository
+access_check_ref_id#:#Access Check: Ref ID
+permission#:#Access Check: Permission
+edit_title#:#Edit Title
+edit_items#:#Edit Items
+edit_menu#:#Edit Menu
+menu_items#:#Menu Items
+add_menu_item#:#Add Menu Item
+new_menu_item#:#New Menu Item
+target#:#URL
+all_menus#:#All Menus
+edit_menu_item#:#Edit Menu Item
+default_language#:#Default Language
+menu_type_info_custom#:#A custom menu contains any items that link to URLs or ILIAS ressources.
+menu_type_info_pd#:#This adds the standard ILIAS personal desktop menu. You can only add it one time to your menu list.
+menu_type_info_rep#:#This adds the standard ILIAS repository menu. You can only add it one time to your menu list.
+menu_title#:#Menu Title
+access_check_ref_id_info#:#Ref ID of the ILIAS ressource that determines whether the menu should be shown or not. Leave empty, if the menu should be displayed always. You find Ref IDs in the URL of ILIAS ressources as a parameter ref_id.
+access_check_permission_info#:#Permission that is checked (Only if a Ref ID is given).
+translations#:#Translations
+menu_p_mode_0#:#Public and Non-Public Area
+menu_p_mode_1#:#Non-Public Area Only
+menu_p_mode_2#:#Public Area Only
+visibility#:#Visibility
+item_type#:#Type
+ref_id#:#Ref ID
+separator#:#Separator
+append_lv#:#Append Last Visited
+newwin#:#Open in new tab/window
