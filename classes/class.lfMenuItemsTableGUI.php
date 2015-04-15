@@ -109,8 +109,7 @@ class lfMenuItemsTableGUI extends ilTable2GUI
 		$this->tpl->setVariable("VAL_ID", $a_set["id"]);
 		$this->tpl->setVariable("VAL_TITLE",
 			lfCustomMenu::getItemPresentationTitle($a_set["id"], $a_set["it_type"],
-				$a_set["ref_id"], $lng->getDefaultLanguage()));
-		
+				$a_set["ref_id"], $lng->getDefaultLanguage(), $a_set["feature_id"]));
 		if ($a_set["it_type"] == lfCustomMenu::ITEM_TYPE_REF_ID)
 		{
 			$this->tpl->setVariable("REF_ID", $a_set["ref_id"]);

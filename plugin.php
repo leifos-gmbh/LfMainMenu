@@ -1,14 +1,14 @@
 <?php
 
 //
-// Copyright (c) 2012 Leifos GmbH, GPL2, see docs/LICENSE
+// Copyright (c) 2015 Leifos GmbH, GPL3, see docs/LICENSE
 //
 
 // alphanumerical ID of the plugin; never change this
 $id = "lfmainmenu";
 
 // code version; must be changed for all code changes
-$version = "0.0.17";
+$version = "0.0.18";
 
 // ilias min and max version; must always reflect the versions that should
 // run with the plugin

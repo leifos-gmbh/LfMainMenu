@@ -144,7 +144,8 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 						$items = lfCustomMenu::getMenuItems($menu["id"]);
 						
 						include_once("./Services/UIComponent/GroupedList/classes/class.ilGroupedListGUI.php");
-						$gl = new ilGroupedListGUI();
+						$this->getPluginObject()->includeClass("class.lfGroupedListGUI.php");
+						$gl = new lfGroupedListGUI();
 						$gl->setAsDropDown(true);
 	
 	//					var_dump($menu);
@@ -153,6 +154,7 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 						{
 							foreach ($items as $item)
 							{
+								// urls and ref ids
 								if (($item["it_type"] == lfCustomMenu::ITEM_TYPE_URL &&
 										((int) $item["acc_ref_id"] == 0 ||
 										$ilAccess->checkAccess($item["acc_perm"], "",
@@ -194,13 +196,29 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 									
 									$gl->addEntry(
 										lfCustomMenu::getItemPresentationTitle($item["id"], $item["it_type"],
-											$item["ref_id"], $ilUser->getLanguage()),
+											$item["ref_id"], $ilUser->getLanguage(), $item["full_id"]),
 										$item["target"],
 										$ltarget);
 									$cust_done = true;
 								}
-								
-								// last visited items
+
+								// features
+								if ($item["it_type"] == lfCustomMenu::ITEM_TYPE_FEATURE)
+								{
+									// check visibility
+									$f = $this->getPluginObject()->getFeatureById($item["feature_id"]);
+									if (is_array($f) && $f["instance"]->isVisible($f["feature_id"]))
+									{
+										$gl->addEntry(
+											lfCustomMenu::getItemPresentationTitle($item["id"], $item["it_type"],
+											0, $ilUser->getLanguage(), $f["full_id"]),
+											$f["instance"]->getHref($f["feature_id"]));
+										$cust_done = true;
+									}
+								}
+
+
+								// separator
 								if ($item["it_type"] == lfCustomMenu::ITEM_TYPE_SEPARATOR)
 								{
 									$gl->addSeparator();

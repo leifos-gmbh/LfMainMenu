@@ -22,6 +22,7 @@ class lfCustomMenu
 	const ITEM_TYPE_REF_ID = 1;
 	const ITEM_TYPE_LAST_VISITED = 2;
 	const ITEM_TYPE_SEPARATOR = 3;
+	const ITEM_TYPE_FEATURE = 4;
 	
 	/**
 	 * Get menu types
@@ -175,7 +176,7 @@ class lfCustomMenu
 	 * @param
 	 */
 	function updateMenuItem($a_id, $a_target, $a_acc_ref_id, $a_acc_perm, $a_pmode,
-		$a_type = 0, $a_ref_id = "", $a_newwin = 0)
+		$a_type = 0, $a_ref_id = "", $a_newwin = 0, $a_feature_id)
 	{
 		global $ilDB;
 
@@ -186,7 +187,8 @@ class lfCustomMenu
 			" it_type = ".$ilDB->quote($a_type, "integer").",".
 			" ref_id = ".$ilDB->quote($a_ref_id, "integer").",".
 			" newwin = ".$ilDB->quote((int) $a_newwin, "integer").",".
-			" pmode = ".$ilDB->quote($a_pmode, "integer").
+			" pmode = ".$ilDB->quote($a_pmode, "integer").",".
+			" feature_id = ".$ilDB->quote($a_feature_id, "text").
 			" WHERE id = ".$ilDB->quote($a_id, "integer")
 		);
 	}
@@ -249,7 +251,7 @@ class lfCustomMenu
 	 * @return
 	 */
 	function addMenuItem($a_menu_id, $a_title, $a_target, $a_acc_ref_id, $a_acc_perm,
-		$a_pmode, $a_type, $a_ref_id, $a_newwin = 0)
+		$a_pmode, $a_type, $a_ref_id, $a_newwin = 0, $a_feature_id)
 	{
 		global $ilDB, $lng;
 
@@ -257,7 +259,7 @@ class lfCustomMenu
 
 		$nid = $ilDB->nextId("ui_uihk_lfmainmenu_it");
 		$ilDB->manipulate("INSERT INTO ui_uihk_lfmainmenu_it ".
-			"(id, menu_id, nr, target, acc_ref_id, acc_perm, pmode, it_type, ref_id, newwin) VALUES (".
+			"(id, menu_id, nr, target, acc_ref_id, acc_perm, pmode, it_type, ref_id, newwin, feature_id) VALUES (".
 			$ilDB->quote($nid, "integer").",".
 			$ilDB->quote($a_menu_id, "integer").",".
 			$ilDB->quote($max + 1, "integer").",".
@@ -267,7 +269,8 @@ class lfCustomMenu
 			$ilDB->quote($a_pmode, "integer").",".
 			$ilDB->quote($a_type, "integer").",".
 			$ilDB->quote($a_ref_id, "integer").",".
-			$ilDB->quote((int) $a_newwin, "integer").
+			$ilDB->quote((int) $a_newwin, "integer").",".
+			$ilDB->quote($a_feature_id, "text").
 			")");
 		
 		// title
@@ -464,7 +467,7 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function getItemPresentationTitle($a_id, $a_type, $a_ref_id, $a_lang)
+	function getItemPresentationTitle($a_id, $a_type, $a_ref_id, $a_lang, $a_full_feature_id)
 	{
 		global $lng, $ilPluginAdmin;
 		
@@ -486,7 +489,15 @@ class lfCustomMenu
 		}
 		else
 		{
-			return self::lookupTitle("it", $a_id, $a_lang, true);
+
+			$title = self::lookupTitle("it", $a_id, $a_lang, true);
+			if ($title == "" && $a_type == self::ITEM_TYPE_FEATURE)
+			{
+				$feat = $pl->getFeatureById($a_full_feature_id);
+				$title = $feat["feature"];
+			}
+
+			return $title;
 		}
 	}
 	

@@ -257,4 +257,14 @@ $ilDB->addTableColumn("ui_uihk_lfmainmenu_it", "newwin",
 	));
 
 ?>
+<#19>
+<?php
+$ilDB->addTableColumn("ui_uihk_lfmainmenu_it", "feature_id",
+	array (
+		'type' => 'text',
+		'length' => 400,
+		'notnull' => false
+	));
+
+?>
 

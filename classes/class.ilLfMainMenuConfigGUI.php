@@ -401,7 +401,7 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 			$this->getPluginObject()->includeClass("class.lfCustomMenu.php");
 			lfCustomMenu::updateMenuItem($_GET["item_id"],
 				$_POST["target"], $_POST["acc_ref_id"], $_POST["acc_perm"],
-				$_POST["pmode"], $_POST["type"], $_POST["ref_id"], $_POST["newwin"]);
+				$_POST["pmode"], $_POST["type"], $_POST["ref_id"], $_POST["newwin"], $_POST["feature_id"]);
 			
 			lfCustomMenu::saveTitle("it", (int) $_GET["item_id"],
 				$lng->getDefaultLanguage(), $_POST["title"]);
@@ -447,7 +447,10 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		
 		// type
 		$type = new ilRadioGroupInputGUI($this->getPluginObject()->txt("item_type"), "type");
-		$type->setValue(lfCustomMenu::ITEM_TYPE_URL);
+		$type->setValue(lfCustomMenu::ITEM_TYPE_FEATURE);
+		$tfeat = new ilRadioOption($this->getPluginObject()->txt("feature"), lfCustomMenu::ITEM_TYPE_FEATURE,
+			"");
+		$type->addOption($tfeat);
 		$turl = new ilRadioOption($lng->txt("url"), lfCustomMenu::ITEM_TYPE_URL,
 			"");
 		$type->addOption($turl);
@@ -495,6 +498,16 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		$ref_id->setMaxLength(8);
 		$ref_id->setSize(8);
 		$tref->addSubItem($ref_id);
+
+		// features
+		$options = array();
+		foreach ($this->getPluginObject()->getFeatureMenuEntries() as $f)
+		{
+			$options[$f["service_id"].":".$f["feature_id"]] = $f["full_title"];
+		}
+		$feat = new ilSelectInputGUI($this->getPluginObject()->txt("feature"), "feature_id");
+		$feat->setOptions($options);
+		$tfeat->addSubItem($feat);
 		
 		if ($a_mode == "edit")
 		{
@@ -504,6 +517,7 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 			$pmode->setValue($item["pmode"]);
 			$type->setValue($item["it_type"]);
 			$ref_id->setValue($item["ref_id"]);
+			$feat->setValue($item["feature_id"]);
 			$nw->setChecked($item["newwin"]);
 			$ti->setValue(lfCustomMenu::lookupTitle("it", $_GET["item_id"],
 				$lng->getDefaultLanguage()));
@@ -552,7 +566,7 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 			lfCustomMenu::addMenuItem((int) $_GET["menu_id"], $_POST["title"],
 				$_POST["target"],
 				$_POST["acc_ref_id"], $_POST["acc_perm"], $_POST["pmode"],
-				$_POST["type"], $_POST["ref_id"], $_POST["newwin"]);
+				$_POST["type"], $_POST["ref_id"], $_POST["newwin"], $_POST["feature_id"]);
 			ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
 			$ilCtrl->redirect($this, "listItems");
 		}
