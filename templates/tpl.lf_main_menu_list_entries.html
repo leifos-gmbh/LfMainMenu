@@ -1,7 +1,7 @@
 <ul class="nav navbar-nav">
 	<!-- BEGIN c_item -->
 	<!-- BEGIN cust_menu -->
-	<li class="dropdown"><a id="cust_tr_{MM_ID}" href="#" class="dropdown-toggle" data-toggle="dropdown">{TXT_CUSTOM} <span class="caret"></span></a>{SEL}
+	<li class="dropdown lfCustomDropDown"><a id="cust_tr_{MM_ID}" href="#" class="dropdown-toggle" data-toggle="dropdown">{TXT_CUSTOM} <span class="caret"></span></a>{SEL}
 		{CUSTOM_CONT_OV}
 	</li>
 	<!-- END cust_menu -->
@@ -15,16 +15,10 @@
 		{REP_EN_OV}
 	</li>
 	<!-- END entry_repository -->
-	<!-- END c_item -->
-	<!-- BEGIN entry_search -->
-	<!-- END entry_search -->
-	<!-- BEGIN entry_mail -->
-	<!-- END entry_mail -->
-	<!-- BEGIN entry_shop -->
-	<li class="dropdown"><a id="mm_shop_tr" href="#" class="dropdown-toggle" data-toggle="dropdown">{TXT_SHOP}<span class="caret"></span></a>{SEL}
-		{SHOP_CONT_OV}
+	<!-- BEGIN simple_item -->
+	<li class="dropdown"><a class="dropdown-toggle" href="{SI_HREF}" {SI_TARGET}>{SI_TEXT}</a>
 	</li>
-	<!-- END entry_shop -->
+	<!-- END simple_item -->
 	<!-- BEGIN entry_administration -->
 	<li class="dropdown yamm"><a id="mm_adm_tr" href="#" data-loaded="0" class="dropdown-toggle" data-toggle="dropdown" {ACC_KEY_ADMINISTRATION}>{TXT_ADMINISTRATION} <span class="caret"></span></a>{SEL}
 		<div id="adm_ajax_target"></div>
@@ -54,6 +48,16 @@
 		</script>
 	</li>
 	<!-- END entry_administration -->
+	<!-- END c_item -->
+	<!-- BEGIN entry_shop -->
+	<li class="dropdown"><a id="mm_shop_tr" href="#" class="dropdown-toggle" data-toggle="dropdown">{TXT_SHOP}<span class="caret"></span></a>{SEL}
+		{SHOP_CONT_OV}
+	</li>
+	<!-- END entry_shop -->
+	<!-- BEGIN entry_search -->
+	<!-- END entry_search -->
+	<!-- BEGIN entry_mail -->
+	<!-- END entry_mail -->
 	<!-- BEGIN nav_history -->
 	<!-- END nav_history -->
 	<!-- BEGIN chat_lastmsg -->

@@ -93,58 +93,70 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 		$this->form = new ilPropertyFormGUI();
 
-		// menu type
-		$type = new ilRadioGroupInputGUI($this->getPluginObject()->txt("menu_type"), "type");
 		$this->getPluginObject()->includeClass("class.lfCustomMenu.php");
-		foreach (lfCustomMenu::getMenuTypes() as $t => $l)
+
+		$menu = null;
+		if ($a_mode == "edit")
 		{
-			$type_opt[$t] = new ilRadioOption($l, $t,
-				$this->getPluginObject()->txt("menu_type_info_".$t));
-			$type->addOption($type_opt[$t]);
+			$menu = lfCustomMenu::getMenuItem($_GET["menu_id"]);
 		}
-		$type->setValue("custom");
-		$this->form->addItem($type);
-		
+
 		// title
 		$ti = new ilTextInputGUI($this->getPluginObject()->txt("menu_title"), "title");
 		$ti->setMaxLength(200);
 		$lng->loadLanguageModule("meta");
 		$ti->setInfo($lng->txt("meta_l_".$lng->getDefaultLanguage()).
 			" (".$this->getPluginObject()->txt("default_language").")");
-		$type_opt["custom"]->addSubItem($ti);
-		
+		$this->form->addItem($ti);
+
 		// public mode
 		$options = lfCustomMenu::getPublicModes();
 		$pmode = new ilSelectInputGUI($this->getPluginObject()->txt("visibility"), "pmode");
 		$pmode->setOptions($options);
-		$type_opt["custom"]->addSubItem($pmode);
-		
+		$this->form->addItem($pmode);
+
+		// menu type
+		$type = new ilRadioGroupInputGUI($this->getPluginObject()->txt("menu_type"), "type");
+		foreach (lfCustomMenu::getMenuTypes() as $t => $l)
+		{
+			$type_opt[$t] = new ilRadioOption($l, $t,
+				$this->getPluginObject()->txt("menu_type_info_".$t));
+			$type->addOption($type_opt[$t]);
+		}
+		$type->setValue(lfCustomMenu::ITEM_TYPE_CUSTOM_MENU);
+		$this->form->addItem($type);
+
 		// access check ref id
-		$acc_ref_id = new ilNumberInputGUI($this->getPluginObject()->txt("access_check_ref_id"), "acc_ref_id");
+		$acc_ref_id = new ilNumberInputGUI($this->getPluginObject()->txt("access_check_ref_id"), "cust_acc_ref_id");
 		$acc_ref_id->setInfo($this->getPluginObject()->txt("access_check_ref_id_info"));
 		$acc_ref_id->setMaxLength(8);
 		$acc_ref_id->setSize(8);
-		$type_opt["custom"]->addSubItem($acc_ref_id);
+		$type_opt[lfCustomMenu::ITEM_TYPE_CUSTOM_MENU]->addSubItem($acc_ref_id);
 		
 		// access check permission
 		$options = array("visible" => "visible",
 			"read" => "read",
 			"write" => "write");
-		$acc_perm = new ilSelectInputGUI($this->getPluginObject()->txt("permission"), "acc_perm");
+		$acc_perm = new ilSelectInputGUI($this->getPluginObject()->txt("permission"), "cust_acc_perm");
 		$acc_perm->setInfo($this->getPluginObject()->txt("access_check_permission_info"));
 		$acc_perm->setOptions($options);
 		$acc_perm->setValue("read");
-		$type_opt["custom"]->addSubItem($acc_perm);
+		$type_opt[lfCustomMenu::ITEM_TYPE_CUSTOM_MENU]->addSubItem($acc_perm);
 		
 		// append lv 
 		$alv = new ilCheckboxInputGUI($this->getPluginObject()->txt("append_lv"),
 			"append_lv");
-		$type_opt["pd"]->addSubItem($alv);
-		
+		$type_opt[lfCustomMenu::ITEM_TYPE_PD_MENU]->addSubItem($alv);
+
+		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_SEPARATOR, $type, $menu);
+		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_FEATURE, $type, $menu);
+		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_URL, $type, $menu);
+		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_REF_ID, $type, $menu);
+		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_ADMIN, $type, $menu);
+
 		if ($a_mode == "edit")
 		{
-			$menu = lfCustomMenu::getMenu($_GET["menu_id"]);
-			$type->setValue($menu["type"]);
+			$type->setValue($menu["it_type"]);
 			if ((int) $menu["acc_ref_id"] > 0)
 			{
 				$acc_ref_id->setValue($menu["acc_ref_id"]);
@@ -156,7 +168,7 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 			$acc_perm->setValue($menu["acc_perm"]);
 			$pmode->setValue($menu["pmode"]);
 			$alv->setChecked($menu["append_last_visited"]);
-			$ti->setValue(lfCustomMenu::lookupTitle("mn", $_GET["menu_id"],
+			$ti->setValue(lfCustomMenu::lookupTitle("it", $_GET["menu_id"],
 				$lng->getDefaultLanguage()));
 		}
 		
@@ -188,9 +200,21 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		if ($this->form->checkInput())
 		{
 			$this->getPluginObject()->includeClass("class.lfCustomMenu.php");
-			lfCustomMenu::addMenu($_POST["title"],
-				$_POST["type"], $_POST["acc_ref_id"], $_POST["acc_perm"],
-				$_POST["pmode"], $_POST["append_lv"]);
+
+
+			if ($_POST["type"] == lfCustomMenu::ITEM_TYPE_CUSTOM_MENU)
+			{
+				$_POST["acc_ref_id"] = $_POST["cust_acc_ref_id"];
+				$_POST["acc_perm"] = $_POST["cust_acc_perm"];
+			}
+			lfCustomMenu::addMenuItem(0, $_POST["title"],
+				$_POST["target"],
+				$_POST["acc_ref_id"], $_POST["acc_perm"], $_POST["pmode"],
+				$_POST["type"], $_POST["ref_id"], $_POST["newwin"], $_POST["feature_id"], $_POST["append_lv"]);
+
+			//lfCustomMenu::addMenu($_POST["title"],
+			//	$_POST["type"], $_POST["acc_ref_id"], $_POST["acc_perm"],
+			//	$_POST["pmode"], $_POST["append_lv"]);
 			ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
 			$ilCtrl->redirect($this, "configure");
 		}
@@ -212,11 +236,22 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		if ($this->form->checkInput())
 		{
 			$this->getPluginObject()->includeClass("class.lfCustomMenu.php");
-			lfCustomMenu::updateMenu((int) $_GET["menu_id"],
-				$_POST["type"], $_POST["acc_ref_id"], $_POST["acc_perm"],
-				$_POST["pmode"], $_POST["append_lv"]);
+			if ($_POST["type"] == lfCustomMenu::ITEM_TYPE_CUSTOM_MENU)
+			{
+				$_POST["acc_ref_id"] = $_POST["cust_acc_ref_id"];
+				$_POST["acc_perm"] = $_POST["cust_acc_perm"];
+			}
+
+			lfCustomMenu::updateMenuItem((int) $_GET["menu_id"],
+				$_POST["target"], $_POST["acc_ref_id"], $_POST["acc_perm"],
+				$_POST["pmode"], $_POST["type"], $_POST["ref_id"], $_POST["newwin"], $_POST["feature_id"], $_POST["append_lv"]);
+
+
+			//lfCustomMenu::updateMenu((int) $_GET["menu_id"],
+			//	$_POST["type"], $_POST["acc_ref_id"], $_POST["acc_perm"],
+			//	$_POST["pmode"], $_POST["append_lv"]);
 			
-			lfCustomMenu::saveTitle("mn", (int) $_GET["menu_id"],
+			lfCustomMenu::saveTitle("it", (int) $_GET["menu_id"],
 				$lng->getDefaultLanguage(), $_POST["title"]);
 
 			ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
@@ -234,7 +269,7 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 	 */
 	function confirmItemDeletion()
 	{
-		global $ilCtrl, $tpl, $lng;
+		global $ilCtrl, $tpl, $lng, $ilUser;
 
 		if (!is_array($_POST["id"]) || count($_POST["id"]) == 0)
 		{
@@ -253,8 +288,9 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 			$this->getPluginObject()->includeClass("class.lfCustomMenu.php");
 			foreach ($_POST["id"] as $i)
 			{
+				$it = lfCustomMenu::getMenuitem($i);
 				$cgui->addItem("id[]", $i,
-					lfCustomMenu::lookupTitle("it", (int) $i));
+					lfCustomMenu::getItemPresentationTitle((int) $i, $it["it_type"], $it["ref_id"], $ilUser->getLanguage(), $it["full_id"]));
 			}
 
 			$tpl->setContent($cgui->getHTML());
@@ -430,7 +466,15 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 		$this->form = new ilPropertyFormGUI();
 
-		// title
+		$this->getPluginObject()->includeClass("class.lfCustomMenu.php");
+
+		$item = null;
+		if ($a_mode == "edit")
+		{
+			$item = lfCustomMenu::getMenuItem($_GET["item_id"]);
+		}
+
+			// title
 		$ti = new ilTextInputGUI($lng->txt("title"), "title");
 		$ti->setMaxLength(200);
 		$lng->loadLanguageModule("meta");
@@ -439,7 +483,6 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		$this->form->addItem($ti);
 		
 		// public mode
-		$this->getPluginObject()->includeClass("class.lfCustomMenu.php");
 		$options = lfCustomMenu::getPublicModes();
 		$pmode = new ilSelectInputGUI($this->getPluginObject()->txt("visibility"), "pmode");
 		$pmode->setOptions($options);
@@ -448,87 +491,35 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		// type
 		$type = new ilRadioGroupInputGUI($this->getPluginObject()->txt("item_type"), "type");
 		$type->setValue(lfCustomMenu::ITEM_TYPE_FEATURE);
-		$tfeat = new ilRadioOption($this->getPluginObject()->txt("feature"), lfCustomMenu::ITEM_TYPE_FEATURE,
-			"");
-		$type->addOption($tfeat);
-		$turl = new ilRadioOption($lng->txt("url"), lfCustomMenu::ITEM_TYPE_URL,
-			"");
-		$type->addOption($turl);
-		$tref = new ilRadioOption($this->getPluginObject()->txt("ref_id"), lfCustomMenu::ITEM_TYPE_REF_ID,
-			"");
-		$type->addOption($tref);
+
+		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_FEATURE, $type, $item);
+		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_URL, $type, $item);
+		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_REF_ID, $type, $item);
+
 		$lv = new ilRadioOption($lng->txt("last_visited"), lfCustomMenu::ITEM_TYPE_LAST_VISITED,
 			"");
 		$type->addOption($lv);
-		$sep = new ilRadioOption($this->getPluginObject()->txt("separator"), lfCustomMenu::ITEM_TYPE_SEPARATOR,
+
+		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_SEPARATOR, $type);
+
+		$sub = new ilRadioOption($this->getPluginObject()->txt("submenu"), lfCustomMenu::ITEM_TYPE_SUBMENU,
 			"");
-		$type->addOption($sep);
-		
+		$type->addOption($sub);
+
+		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_ADMIN, $type, $item);
+
 		$this->form->addItem($type);
 
-		// target
-		$target = new ilTextInputGUI($this->getPluginObject()->txt("target"), "target");
-		$target->setMaxLength(200);
-		$turl->addSubItem($target);
 
-		// new window?
-		$nw = new ilCheckboxInputGUI($this->getPluginObject()->txt("newwin"), "newwin");
-		$turl->addSubItem($nw);
-
-		// access check ref id
-		$acc_ref_id = new ilNumberInputGUI($this->getPluginObject()->txt("access_check_ref_id"), "acc_ref_id");
-		$acc_ref_id->setInfo($this->getPluginObject()->txt("access_check_ref_id_info"));
-		$acc_ref_id->setMaxLength(8);
-		$acc_ref_id->setSize(8);
-		$turl->addSubItem($acc_ref_id);
-		
-		// access check permission
-		$options = array("visible" => "visible",
-			"read" => "read",
-			"write" => "write");
-		$acc_perm = new ilSelectInputGUI($this->getPluginObject()->txt("permission"), "acc_perm");
-		$acc_perm->setInfo($this->getPluginObject()->txt("access_check_permission_info"));
-		$acc_perm->setOptions($options);
-		$acc_perm->setValue("read");
-		$turl->addSubItem($acc_perm);
-		
-		// access check ref id
-		$ref_id = new ilNumberInputGUI($this->getPluginObject()->txt("ref_id"), "ref_id");
-		//$ref_id->setInfo($this->getPluginObject()->txt("access_check_ref_id_info"));
-		$ref_id->setMaxLength(8);
-		$ref_id->setSize(8);
-		$tref->addSubItem($ref_id);
-
-		// features
-		$options = array();
-		foreach ($this->getPluginObject()->getFeatureMenuEntries() as $f)
-		{
-			$options[$f["service_id"].":".$f["feature_id"]] = $f["full_title"];
-		}
-		$feat = new ilSelectInputGUI($this->getPluginObject()->txt("feature"), "feature_id");
-		$feat->setOptions($options);
-		$tfeat->addSubItem($feat);
-		
 		if ($a_mode == "edit")
 		{
 			$item = lfCustomMenu::getMenuItem($_GET["item_id"]);
-			$target->setValue($item["target"]);
-			$acc_perm->setValue($item["acc_perm"]);
+
+
 			$pmode->setValue($item["pmode"]);
 			$type->setValue($item["it_type"]);
-			$ref_id->setValue($item["ref_id"]);
-			$feat->setValue($item["feature_id"]);
-			$nw->setChecked($item["newwin"]);
 			$ti->setValue(lfCustomMenu::lookupTitle("it", $_GET["item_id"],
 				$lng->getDefaultLanguage()));
-			if ((int) $item["acc_ref_id"] > 0)
-			{
-				$acc_ref_id->setValue($item["acc_ref_id"]);
-			}
-			else
-			{
-				$acc_ref_id->setValue("");
-			}
 
 		}
 		
@@ -548,6 +539,115 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 
 		$this->form->setFormAction($ilCtrl->getFormAction($this));
 	}
+
+	/**
+	 * Add type option to form
+	 *
+	 * @param
+	 * @return
+	 */
+	function addTypeOption($a_type, $type, $item = null)
+	{
+		global $lng;
+
+		switch ($a_type)
+		{
+			case lfCustomMenu::ITEM_TYPE_SEPARATOR:
+				$sep = new ilRadioOption($this->getPluginObject()->txt("separator"), lfCustomMenu::ITEM_TYPE_SEPARATOR,
+					"");
+				$type->addOption($sep);
+				break;
+
+			case lfCustomMenu::ITEM_TYPE_FEATURE:
+				$tfeat = new ilRadioOption($this->getPluginObject()->txt("feature"), lfCustomMenu::ITEM_TYPE_FEATURE,
+					"");
+				$type->addOption($tfeat);
+				// features
+				$options = array();
+				foreach ($this->getPluginObject()->getFeatureMenuEntries() as $f)
+				{
+					$options[$f["service_id"].":".$f["feature_id"]] = $f["full_title"];
+				}
+				$feat = new ilSelectInputGUI($this->getPluginObject()->txt("feature"), "feature_id");
+				$feat->setOptions($options);
+				$tfeat->addSubItem($feat);
+				if ($item != null)
+				{
+					$feat->setValue($item["feature_id"]);
+				}
+				break;
+
+			case lfCustomMenu::ITEM_TYPE_URL:
+				$turl = new ilRadioOption($lng->txt("url"), lfCustomMenu::ITEM_TYPE_URL,
+					"");
+				$type->addOption($turl);
+
+				// target
+				$target = new ilTextInputGUI($this->getPluginObject()->txt("target"), "target");
+				$target->setMaxLength(200);
+				$turl->addSubItem($target);
+
+				// new window?
+				$nw = new ilCheckboxInputGUI($this->getPluginObject()->txt("newwin"), "newwin");
+				$turl->addSubItem($nw);
+
+				// access check ref id
+				$acc_ref_id = new ilNumberInputGUI($this->getPluginObject()->txt("access_check_ref_id"), "acc_ref_id");
+				$acc_ref_id->setInfo($this->getPluginObject()->txt("access_check_ref_id_info"));
+				$acc_ref_id->setMaxLength(8);
+				$acc_ref_id->setSize(8);
+				$turl->addSubItem($acc_ref_id);
+
+				// access check permission
+				$options = array("visible" => "visible",
+					"read" => "read",
+					"write" => "write");
+				$acc_perm = new ilSelectInputGUI($this->getPluginObject()->txt("permission"), "acc_perm");
+				$acc_perm->setInfo($this->getPluginObject()->txt("access_check_permission_info"));
+				$acc_perm->setOptions($options);
+				$acc_perm->setValue("read");
+				$turl->addSubItem($acc_perm);
+				if ($item != null)
+				{
+					$target->setValue($item["target"]);
+					$acc_perm->setValue($item["acc_perm"]);
+					$nw->setChecked($item["newwin"]);
+					if ((int) $item["acc_ref_id"] > 0)
+					{
+						$acc_ref_id->setValue($item["acc_ref_id"]);
+					}
+					else
+					{
+						$acc_ref_id->setValue("");
+					}
+				}
+				break;
+
+			case lfCustomMenu::ITEM_TYPE_REF_ID:
+				$tref = new ilRadioOption($this->getPluginObject()->txt("ref_id"), lfCustomMenu::ITEM_TYPE_REF_ID,
+					"");
+				$type->addOption($tref);
+				// access check ref id
+				$ref_id = new ilNumberInputGUI($this->getPluginObject()->txt("ref_id"), "ref_id");
+				//$ref_id->setInfo($this->getPluginObject()->txt("access_check_ref_id_info"));
+				$ref_id->setMaxLength(8);
+				$ref_id->setSize(8);
+				$tref->addSubItem($ref_id);
+				if ($item != null)
+				{
+					$ref_id->setValue($item["ref_id"]);
+				}
+				break;
+
+			case lfCustomMenu::ITEM_TYPE_ADMIN:
+				$adm = new ilRadioOption($this->getPluginObject()->txt("administration"), lfCustomMenu::ITEM_TYPE_ADMIN,
+					"");
+				$type->addOption($adm);
+				break;
+
+		}
+	}
+
 
 	/**
 	 * Save item
@@ -582,7 +682,7 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 	 */
 	function confirmMenuDeletion()
 	{
-		global $ilCtrl, $tpl, $lng;
+		global $ilCtrl, $tpl, $lng, $ilUser;
 
 		if (!is_array($_POST["id"]) || count($_POST["id"]) == 0)
 		{
@@ -601,8 +701,9 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 			$this->getPluginObject()->includeClass("class.lfCustomMenu.php");
 			foreach ($_POST["id"] as $i)
 			{
+				$it = lfCustomMenu::getMenuitem($i);
 				$cgui->addItem("id[]", $i,
-					lfCustomMenu::lookupTitle("mn", (int) $i));
+					lfCustomMenu::getItemPresentationTitle((int) $i, $it["it_type"], $it["ref_id"], $ilUser->getLanguage(), $it["full_id"]));
 			}
 
 			$tpl->setContent($cgui->getHTML());
@@ -712,7 +813,7 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		$this->getPluginObject()->includeClass("class.lfCustomMenu.php");
 		foreach ($lng->getInstalledLanguages() as $l)
 		{
-			lfCustomMenu::saveTitle("mn", $_GET["menu_id"], $l,
+			lfCustomMenu::saveTitle("it", $_GET["menu_id"], $l,
 				ilUtil::stripSlashes($_POST["trans"][$l]));
 		}
 		

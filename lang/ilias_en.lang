@@ -12,9 +12,9 @@ add_menu#:#Add Menu
 menus#:#Menus
 new_menu#:#New Menu
 menu_type#:#Menu Type
-menu_t_custom#:#Custom
-menu_t_pd#:#Personal Desktop
-menu_t_rep#:#Repository
+menu_t_7#:#Custom
+menu_t_8#:#Personal Desktop
+menu_t_9#:#Repository
 access_check_ref_id#:#Access Check: Ref ID
 permission#:#Access Check: Permission
 edit_title#:#Edit Title
@@ -27,9 +27,9 @@ target#:#URL
 all_menus#:#All Menus
 edit_menu_item#:#Edit Menu Item
 default_language#:#Default Language
-menu_type_info_custom#:#A custom menu contains any items that link to URLs or ILIAS ressources.
-menu_type_info_pd#:#This adds the standard ILIAS personal desktop menu. You can only add it one time to your menu list.
-menu_type_info_rep#:#This adds the standard ILIAS repository menu. You can only add it one time to your menu list.
+menu_type_info_7#:#A custom menu contains any items that link to URLs or ILIAS ressources.
+menu_type_info_8#:#This adds the standard ILIAS personal desktop menu. You can only add it one time to your menu list.
+menu_type_info_9#:#This adds the standard ILIAS repository menu. You can only add it one time to your menu list.
 menu_title#:#Menu Title
 access_check_ref_id_info#:#Ref ID of the ILIAS ressource that determines whether the menu should be shown or not. Leave empty, if the menu should be displayed always. You find Ref IDs in the URL of ILIAS ressources as a parameter ref_id.
 access_check_permission_info#:#Permission that is checked (Only if a Ref ID is given).
@@ -44,3 +44,12 @@ separator#:#Separator
 append_lv#:#Append Last Visited
 newwin#:#Open in new tab/window
 feature#:#Feature
+submenu#:#Submenu
+administration#:#Administration
+menu_t_0#:#URL
+menu_t_1#:#Ref ID
+menu_t_2#:#Last Visited
+menu_t_3#:#Separator
+menu_t_4#:#Feature
+menu_t_5#:#Submenu
+menu_t_6#:#Administration

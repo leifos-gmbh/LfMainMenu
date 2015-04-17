@@ -27,12 +27,13 @@ class lfMenuItemsTableGUI extends ilTable2GUI
 		parent::__construct($a_parent_obj, $a_parent_cmd);
 		$this->setData($this->getItems($this->menu_id));
 		$this->setTitle($this->plugin->txt("menu_items").
-			": ".lfCustomMenu::lookupTitle("mn",$this->menu_id));
+			": ".lfCustomMenu::lookupTitle("it",$this->menu_id));
 		$this->setLimit(9999);
 
 		$this->addColumn("", "", "1", true);
 		$this->addColumn($this->plugin->txt("nr"), "nr", "1");
 		$this->addColumn($this->lng->txt("title"));
+		$this->addColumn($this->lng->txt("type"));
 		$this->addColumn($this->plugin->txt("ref_id"));
 		$this->addColumn($this->lng->txt("target"));
 		$this->addColumn($this->plugin->txt("access_check_ref_id"));
@@ -94,8 +95,8 @@ class lfMenuItemsTableGUI extends ilTable2GUI
 			$lng->txt("edit"));
 		$this->tpl->parseCurrentBlock();
 		
-		if ($a_set["it_type"] == lfCustomMenu::ITEM_TYPE_REF_ID
-			|| $a_set["it_type"] == lfCustomMenu::ITEM_TYPE_URL)
+		if (in_array($a_set["it_type"], array(lfCustomMenu::ITEM_TYPE_REF_ID,
+			lfCustomMenu::ITEM_TYPE_URL, lfCustomMenu::ITEM_TYPE_FEATURE, lfCustomMenu::ITEM_TYPE_SUBMENU)))
 		{
 			$this->tpl->setCurrentBlock("cmd");
 			$this->tpl->setVariable("HREF_CMD",
@@ -105,6 +106,19 @@ class lfMenuItemsTableGUI extends ilTable2GUI
 			$this->tpl->parseCurrentBlock();
 		}
 
+		if ($a_set["it_type"] == lfCustomMenu::ITEM_TYPE_SUBMENU)
+		{
+//var_dump($a_set);
+			$ilCtrl->setParameter($this->parent_obj, "menu_id", $a_set["submenu_id"]);
+			$this->tpl->setCurrentBlock("cmd");
+			$this->tpl->setVariable("HREF_CMD",
+				$ilCtrl->getLinkTarget($this->parent_obj, "listItems"));
+			$this->tpl->setVariable("TXT_CMD",
+				$this->plugin->txt("edit_items"));
+			$this->tpl->parseCurrentBlock();
+		}
+
+		$this->tpl->setVariable("VAL_TYPE", lfCustomMenu::getItemTypeName($a_set["it_type"]));
 		$this->tpl->setVariable("VAL_NR", $a_set["nr"] * 10);
 		$this->tpl->setVariable("VAL_ID", $a_set["id"]);
 		$this->tpl->setVariable("VAL_TITLE",

@@ -10,9 +10,12 @@
  */
 class lfCustomMenu
 {
-	const T_PD = "pd";
-	const T_REP = "rep";
-	const T_CUSTOM = "custom";
+	static $pl;
+
+	const T_PD = 8;
+	const T_REP = 9;
+	const T_CUSTOM = 7;
+	const T_SUBMENU = 5;
 	
 	const PMODE_BOTH = 0;
 	const PMODE_NONPUBLIC_ONLY = 1;
@@ -23,6 +26,11 @@ class lfCustomMenu
 	const ITEM_TYPE_LAST_VISITED = 2;
 	const ITEM_TYPE_SEPARATOR = 3;
 	const ITEM_TYPE_FEATURE = 4;
+	const ITEM_TYPE_SUBMENU = 5;
+	const ITEM_TYPE_ADMIN = 6;
+	const ITEM_TYPE_CUSTOM_MENU = 7;
+	const ITEM_TYPE_PD_MENU = 8;
+	const ITEM_TYPE_REP_MENU = 9;
 	
 	/**
 	 * Get menu types
@@ -65,11 +73,17 @@ class lfCustomMenu
 	/**
 	 * Get menus
 	 */
-	function getMenus()
+	static function getMenus($a_include_submenues = false)
 	{
 		global $ilDB;
 
-		$set = $ilDB->query("SELECT * FROM ui_uihk_lfmainmenu_mn ".
+		$sub = ($a_include_submenues)
+			? ""
+			: " AND it_type <> ".$ilDB->quote(self::T_SUBMENU, "integer");
+
+		$set = $ilDB->query("SELECT * FROM ui_uihk_lfmainmenu_it ".
+			" WHERE menu_id = ".$ilDB->quote(0, "integer").
+			$sub.
 			" ORDER BY nr "
 			);
 		$menus = array();
@@ -87,7 +101,7 @@ class lfCustomMenu
 	{
 		global $ilDB;
 
-		$set = $ilDB->query("SELECT * FROM ui_uihk_lfmainmenu_mn ".
+		$set = $ilDB->query("SELECT * FROM ui_uihk_lfmainmenu_it ".
 			" WHERE id = ".$ilDB->quote($a_menu_id, "integer"));
 		$rec = $ilDB->fetchAssoc($set);
 		return $rec;
@@ -99,17 +113,20 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function addMenu($a_title, $a_type, $a_acc_ref_id, $a_acc_perm, $a_pmode,
+	static function addMenu($a_title, $a_type, $a_acc_ref_id, $a_acc_perm, $a_pmode,
 		$a_append_lv = false)
 	{
 		global $ilDB, $ilUser, $lng;
 
-		$max = lfCustomMenu::getMaxMenuNr();
-
+		$max = 0;
+		if ($a_type != self::T_SUBMENU)
+		{
+			$max = lfCustomMenu::getMaxMenuNr();
+		}
 		// menu
-		$nid = $ilDB->nextId("ui_uihk_lfmainmenu_mn");
-		$ilDB->manipulate("INSERT INTO ui_uihk_lfmainmenu_mn ".
-			"(id, type, nr, acc_ref_id, acc_perm,pmode,append_last_visited) VALUES (".
+		$nid = $ilDB->nextId("ui_uihk_lfmainmenu_it");
+		$ilDB->manipulate("INSERT INTO ui_uihk_lfmainmenu_it ".
+			"(id, it_type, nr, acc_ref_id, acc_perm,pmode,append_last_visited) VALUES (".
 			$ilDB->quote($nid, "integer").",".
 			$ilDB->quote($a_type, "text").",".
 			$ilDB->quote($max + 1, "integer").",".
@@ -123,10 +140,12 @@ class lfCustomMenu
 		$ilDB->manipulate("INSERT INTO ui_uihk_lfmainmenu_tl ".
 			"(id, type, title, lang) VALUES (".
 			$ilDB->quote($nid, "integer").",".
-			$ilDB->quote("mn", "text").",".
+			$ilDB->quote("it", "text").",".
 			$ilDB->quote($a_title, "text").",".
 			$ilDB->quote($lng->getDefaultLanguage(), "text").
 			")");
+
+		return $nid;
 	}
 	
 	/**
@@ -139,8 +158,8 @@ class lfCustomMenu
 	{
 		global $ilDB;
 
-		$ilDB->manipulate("UPDATE ui_uihk_lfmainmenu_mn SET ".
-			" type = ".$ilDB->quote($a_type, "text").",".
+		$ilDB->manipulate("UPDATE ui_uihk_lfmainmenu_it SET ".
+			" it_type = ".$ilDB->quote($a_type, "text").",".
 			" acc_ref_id = ".$ilDB->quote($a_acc_ref_id, "integer").",".
 			" pmode = ".$ilDB->quote($a_pmode, "integer").",".
 			" acc_perm = ".$ilDB->quote($a_acc_perm, "text").",".
@@ -159,7 +178,7 @@ class lfCustomMenu
 	{
 		global $ilDB;
 		
-		$ilDB->manipulate("UPDATE ui_uihk_lfmainmenu_mn SET ".
+		$ilDB->manipulate("UPDATE ui_uihk_lfmainmenu_it SET ".
 			" active  = ".$ilDB->quote((int) $a_active, "integer").
 			" WHERE id = ".$ilDB->quote($a_id, "integer")
 			);
@@ -175,8 +194,8 @@ class lfCustomMenu
 	 *
 	 * @param
 	 */
-	function updateMenuItem($a_id, $a_target, $a_acc_ref_id, $a_acc_perm, $a_pmode,
-		$a_type = 0, $a_ref_id = "", $a_newwin = 0, $a_feature_id)
+	static function updateMenuItem($a_id, $a_target, $a_acc_ref_id, $a_acc_perm, $a_pmode,
+		$a_type = 0, $a_ref_id = "", $a_newwin = 0, $a_feature_id = "", $a_append_lv = 0)
 	{
 		global $ilDB;
 
@@ -188,9 +207,11 @@ class lfCustomMenu
 			" ref_id = ".$ilDB->quote($a_ref_id, "integer").",".
 			" newwin = ".$ilDB->quote((int) $a_newwin, "integer").",".
 			" pmode = ".$ilDB->quote($a_pmode, "integer").",".
-			" feature_id = ".$ilDB->quote($a_feature_id, "text").
+			" feature_id = ".$ilDB->quote($a_feature_id, "text").",".
+			" append_last_visited = ".$ilDB->quote($a_append_lv, "integer").
 			" WHERE id = ".$ilDB->quote($a_id, "integer")
 		);
+
 	}
 
 	/**
@@ -228,7 +249,7 @@ class lfCustomMenu
 	 *
 	 * @return	array		array of courses
 	 */
-	function getMenuItems($a_menu_id)
+	static function getMenuItems($a_menu_id)
 	{
 		global $ilDB;
 
@@ -250,16 +271,21 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function addMenuItem($a_menu_id, $a_title, $a_target, $a_acc_ref_id, $a_acc_perm,
-		$a_pmode, $a_type, $a_ref_id, $a_newwin = 0, $a_feature_id)
+	static function addMenuItem($a_menu_id, $a_title, $a_target, $a_acc_ref_id, $a_acc_perm,
+		$a_pmode, $a_type, $a_ref_id, $a_newwin = 0, $a_feature_id = 0, $a_append_lv = 0)
 	{
 		global $ilDB, $lng;
 
 		$max = lfCustomMenu::getMaxItemNr($a_menu_id);
 
+		if ($a_type == self::ITEM_TYPE_SUBMENU)
+		{
+			$submenu_id = self::addMenu("", self::T_SUBMENU, 0, "", 0);
+		}
+
 		$nid = $ilDB->nextId("ui_uihk_lfmainmenu_it");
 		$ilDB->manipulate("INSERT INTO ui_uihk_lfmainmenu_it ".
-			"(id, menu_id, nr, target, acc_ref_id, acc_perm, pmode, it_type, ref_id, newwin, feature_id) VALUES (".
+			"(id, menu_id, nr, target, acc_ref_id, acc_perm, pmode, it_type, ref_id, newwin, feature_id, submenu_id, active, append_last_visited) VALUES (".
 			$ilDB->quote($nid, "integer").",".
 			$ilDB->quote($a_menu_id, "integer").",".
 			$ilDB->quote($max + 1, "integer").",".
@@ -270,7 +296,11 @@ class lfCustomMenu
 			$ilDB->quote($a_type, "integer").",".
 			$ilDB->quote($a_ref_id, "integer").",".
 			$ilDB->quote((int) $a_newwin, "integer").",".
-			$ilDB->quote($a_feature_id, "text").
+			$ilDB->quote($a_feature_id, "text").",".
+			$ilDB->quote($submenu_id, "integer").",".
+			$ilDB->quote(1, "integer").",".
+			$ilDB->quote($a_append_lv, "integer").
+
 			")");
 		
 		// title
@@ -325,7 +355,7 @@ class lfCustomMenu
 	{
 		global $ilDB;
 
-		$set = $ilDB->query("SELECT MAX(nr) nr FROM ui_uihk_lfmainmenu_mn ");
+		$set = $ilDB->query("SELECT MAX(nr) nr FROM ui_uihk_lfmainmenu_it WHERE menu_id = 0");
 		$rec = $ilDB->fetchAssoc($set);
 
 		return (int) $rec["nr"];
@@ -359,7 +389,7 @@ class lfCustomMenu
 	{
 		global $ilDB;
 
-		$ilDB->manipulate("DELETE FROM ui_uihk_lfmainmenu_mn WHERE "
+		$ilDB->manipulate("DELETE FROM ui_uihk_lfmainmenu_it WHERE "
 			." id = ".$ilDB->quote($a_id, "integer")
 		);
 		$ilDB->manipulate("DELETE FROM ui_uihk_lfmainmenu_it WHERE "
@@ -378,13 +408,13 @@ class lfCustomMenu
 	{
 		global $ilDB;
 
-		$set = $ilDB->query("SELECT id FROM ui_uihk_lfmainmenu_mn ".
+		$set = $ilDB->query("SELECT id FROM ui_uihk_lfmainmenu_it WHERE menu_id = 0 ".
 			" ORDER BY nr "
 			);
 		$cnt = 1;
 		while ($rec = $ilDB->fetchAssoc($set))
 		{
-			$ilDB->manipulate("UPDATE ui_uihk_lfmainmenu_mn SET ".
+			$ilDB->manipulate("UPDATE ui_uihk_lfmainmenu_it SET ".
 				" nr = ".$ilDB->quote($cnt, "integer").
 				" WHERE id = ".$ilDB->quote($rec["id"], "integer")
 				);
@@ -406,7 +436,7 @@ class lfCustomMenu
 		$cnt = 1;
 		foreach ($a_nr as $id => $v)
 		{
-			$ilDB->manipulate("UPDATE ui_uihk_lfmainmenu_mn SET ".
+			$ilDB->manipulate("UPDATE ui_uihk_lfmainmenu_it SET ".
 				" nr = ".$ilDB->quote($cnt, "integer").
 				" WHERE id = ".$ilDB->quote($id, "integer")
 				);
@@ -418,7 +448,6 @@ class lfCustomMenu
 	 * Fix item numbering
 	 *
 	 * @param
-	 * @return
 	 */
 	function fixItemNumbering($a_menu_id)
 	{
@@ -467,38 +496,61 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function getItemPresentationTitle($a_id, $a_type, $a_ref_id, $a_lang, $a_full_feature_id)
+	static function getItemPresentationTitle($a_id, $a_type, $a_ref_id, $a_lang, $a_full_feature_id)
 	{
 		global $lng, $ilPluginAdmin;
-		
-		
+
 		$pl = $ilPluginAdmin->getPluginObject(IL_COMP_SERVICE, "UIComponent",
 			"uihk", "LfMainMenu");
 
-		if ($a_type == self::ITEM_TYPE_REF_ID)
-		{
-			return ilObject::_lookupTitle(ilObject::_lookupObjId($a_ref_id));
-		}
-		else if ($a_type == self::ITEM_TYPE_LAST_VISITED)
+		if ($a_type == self::ITEM_TYPE_LAST_VISITED)
 		{
 			return $lng->txt("last_visited");
 		}
-		else if ($a_type == self::ITEM_TYPE_SEPARATOR)
+		if ($a_type == self::ITEM_TYPE_SEPARATOR)
 		{
 			return $pl->txt("separator");
 		}
-		else
+
+		$title = self::lookupTitle("it", $a_id, $a_lang, true);
+
+
+		if ($title == "")
 		{
-
-			$title = self::lookupTitle("it", $a_id, $a_lang, true);
-			if ($title == "" && $a_type == self::ITEM_TYPE_FEATURE)
+			if ($a_type == self::ITEM_TYPE_REF_ID)
 			{
-				$feat = $pl->getFeatureById($a_full_feature_id);
-				$title = $feat["feature"];
+				return ilObject::_lookupTitle(ilObject::_lookupObjId($a_ref_id));
 			}
+			else if ($a_type == self::ITEM_TYPE_PD_MENU)
+			{
+				return $lng->txt("personal_desktop");
+			}
+			else if ($a_type == self::ITEM_TYPE_REP_MENU)
+			{
+				global $tree;
+				$nd = $tree->getNodeData(ROOT_FOLDER_ID);
+				$title = $nd["title"];
+				if ($title == "ILIAS")
+				{
+					$title = $lng->txt("repository");
+				}
+				return $title;
+			}
+			else if ($a_type == self::ITEM_TYPE_ADMIN)
+			{
+				return $pl->txt("administration");
+			}
+			else
+			{
+				if ($title == "" && $a_type == self::ITEM_TYPE_FEATURE)
+				{
+					$feat = $pl->getFeatureById($a_full_feature_id);
+					$title = $feat["feature"];
+				}
 
-			return $title;
+			}
 		}
+		return $title;
 	}
 	
 	
@@ -538,7 +590,7 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function saveTitle($a_type, $a_id, $a_lang, $a_title)
+	static function saveTitle($a_type, $a_id, $a_lang, $a_title)
 	{
 		global $ilDB;
 		
@@ -625,6 +677,49 @@ class lfCustomMenu
 			}
 		}
 	}
-	
+
+	/**
+	 * Get item type name
+	 *
+	 * @param
+	 * @return
+	 */
+	static function getItemTypeName($a_type)
+	{
+		$pl = self::getPlugin();
+
+		switch ($a_type)
+		{
+			case self::ITEM_TYPE_URL: 			return $pl->txt("target");
+			case self::ITEM_TYPE_REF_ID: 		return $pl->txt("ref_id");
+			case self::ITEM_TYPE_LAST_VISITED: 	return $pl->txt("append_lv");
+			case self::ITEM_TYPE_SEPARATOR: 	return $pl->txt("separator");
+			case self::ITEM_TYPE_FEATURE: 		return $pl->txt("feature");
+			case self::ITEM_TYPE_SUBMENU: 		return $pl->txt("submenu");
+			case self::ITEM_TYPE_ADMIN: 		return $pl->txt("administration");
+		}
+		return "";
+	}
+
+	/**
+	 * Get plugin object
+	 *
+	 * @param
+	 * @return
+	 */
+	static function getPlugin()
+	{
+		global $ilPluginAdmin;
+
+		if (!is_object(self::$pl))
+		{
+			self::$pl = $ilPluginAdmin->getPluginObject(IL_COMP_SERVICE, "UIComponent",
+				"uihk", "LfMainMenu");
+		}
+
+		return self::$pl;
+	}
+
+
 }
 ?>

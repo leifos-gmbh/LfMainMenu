@@ -267,4 +267,124 @@ $ilDB->addTableColumn("ui_uihk_lfmainmenu_it", "feature_id",
 	));
 
 ?>
+<#20>
+<?php
+$ilDB->addTableColumn("ui_uihk_lfmainmenu_it", "submenu_id",
+	array (
+		'type' => 'integer',
+		'length' => 4,
+		'default' => 0,
+		'notnull' => false
+	));
 
+?>
+<#21>
+<?php
+
+$ilDB->modifyTableColumn("ui_uihk_lfmainmenu_it", 'acc_perm', array (
+	'type' => 'text',
+	'length' => 20,
+	'notnull' => false,
+	'default' => null
+)
+);
+
+?>
+<#22>
+<?php
+
+$ilDB->modifyTableColumn("ui_uihk_lfmainmenu_mn", 'acc_perm', array (
+		'type' => 'text',
+		'length' => 20,
+		'notnull' => false,
+		'default' => null
+	)
+);
+
+?>
+<#23>
+<?php
+$ilDB->addTableColumn("ui_uihk_lfmainmenu_it", "active",
+	array (
+		'type' => 'integer',
+		'length' => 1,
+		'default' => 0,
+		'notnull' => false
+	));
+$ilDB->manipulate("UPDATE ui_uihk_lfmainmenu_it SET ".
+	" active = ".$ilDB->quote(1, "integer")
+	);
+?>
+<#24>
+<?php
+$ilDB->addTableColumn("ui_uihk_lfmainmenu_it", "append_last_visited",
+	array (
+		'type' => 'integer',
+		'length' => 1,
+		'default' => 0,
+		'notnull' => false
+	));
+?>
+<#25>
+<?php
+$set = $ilDB->query("SELECT * FROM ui_uihk_lfmainmenu_mn "
+	);
+while ($r = $ilDB->fetchAssoc($set))
+{
+	switch ($r["type"])
+	{
+		case "pd":
+			$it_type = 8;
+			break;
+		case "rep":
+			$it_type = 9;
+			break;
+		case "custom":
+			$it_type = 7;
+			break;
+	}
+	if ($r["type"] != "submenu")
+	{
+		$nid = $ilDB->nextId("ui_uihk_lfmainmenu_it");
+		$ilDB->manipulate("INSERT INTO ui_uihk_lfmainmenu_it ".
+			"(id, menu_id, nr, target, acc_ref_id, acc_perm, pmode, it_type, ref_id, newwin, feature_id, submenu_id, active, append_last_visited) VALUES (".
+			$ilDB->quote($nid, "integer").",".
+			$ilDB->quote(0, "integer").",".
+			$ilDB->quote($r["nr"], "integer").",".
+			$ilDB->quote("", "text").",".
+			$ilDB->quote($r["acc_ref_id"], "integer").",".
+			$ilDB->quote($r["acc_perm"], "text").",".
+			$ilDB->quote($r["pmode"], "integer").",".
+			$ilDB->quote($it_type, "integer").",".
+			$ilDB->quote(0, "integer").",".
+			$ilDB->quote(0, "integer").",".
+			$ilDB->quote("", "text").",".
+			$ilDB->quote(0, "integer").",".
+			$ilDB->quote($r["active"], "integer").",".
+			$ilDB->quote($r["append_last_visited"], "integer").
+			")");
+
+		// link items to new entries
+		$ilDB->manipulate("UPDATE ui_uihk_lfmainmenu_it SET ".
+			" menu_id = ".$ilDB->quote($nid, "integer").
+			" WHERE menu_id = ".$ilDB->quote($r["id"], "integer")
+			);
+
+		// migrate language entries
+		$set2 = $ilDB->query("SELECT * FROM ui_uihk_lfmainmenu_tl ".
+			" WHERE type = ".$ilDB->quote("mn", "text").
+			" AND id = ".$ilDB->quote($r["id"], "integer")
+			);
+		while ($rec2 = $ilDB->fetchAssoc($set2))
+		{
+			$ilDB->manipulate("INSERT INTO ui_uihk_lfmainmenu_tl ".
+				"(id, type, lang, title) VALUES (".
+				$ilDB->quote($nid, "integer").",".
+				$ilDB->quote("it", "text").",".
+				$ilDB->quote($rec2["lang"], "text").",".
+				$ilDB->quote($rec2["title"], "text").
+				")");
+		}
+	}
+}
+?>

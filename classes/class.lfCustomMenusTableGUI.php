@@ -94,8 +94,10 @@ class lfCustomMenusTableGUI extends ilTable2GUI
 		$this->tpl->setVariable("TXT_CMD",
 			$lng->txt("edit"));
 		$this->tpl->parseCurrentBlock();
-		
-		if ($a_set["type"] == "custom")
+
+		if (in_array($a_set["it_type"], array(lfCustomMenu::ITEM_TYPE_CUSTOM_MENU,
+			lfCustomMenu::ITEM_TYPE_FEATURE, lfCustomMenu::ITEM_TYPE_REF_ID, lfCustomMenu::ITEM_TYPE_URL,
+			lfCustomMenu::ITEM_TYPE_REP_MENU, lfCustomMenu::ITEM_TYPE_PD_MENU)))
 		{
 			$this->tpl->setCurrentBlock("cmd");
 			$this->tpl->setVariable("HREF_CMD",
@@ -103,7 +105,12 @@ class lfCustomMenusTableGUI extends ilTable2GUI
 			$this->tpl->setVariable("TXT_CMD",
 				$this->plugin->txt("translations"));
 			$this->tpl->parseCurrentBlock();
-		
+
+		}
+
+		if ($a_set["it_type"] == lfCustomMenu::ITEM_TYPE_CUSTOM_MENU)
+		{
+
 			$this->tpl->setCurrentBlock("cmd");
 			$this->tpl->setVariable("HREF_CMD",
 				$ilCtrl->getLinkTarget($this->parent_obj, "listItems"));
@@ -116,14 +123,14 @@ class lfCustomMenusTableGUI extends ilTable2GUI
 		
 		$this->tpl->setVariable("VAL_NR", $a_set["nr"] * 10);
 		$this->tpl->setVariable("VAL_ID", $a_set["id"]);
-		if ((int) $a_set["acc_ref_id"] > 0 && $a_set["type"] == "custom")
+		if ((int) $a_set["acc_ref_id"] > 0 && $a_set["it_type"] == lfCustomMenu::ITEM_TYPE_CUSTOM_MENU)
 		{
 			$this->tpl->setVariable("VAL_ACC_REF_ID", $a_set["acc_ref_id"]);
 			$this->tpl->setVariable("VAL_ACC_PERM", $a_set["acc_perm"]);
 		}
-		$this->tpl->setVariable("VAL_TYPE", $this->plugin->txt("menu_t_".$a_set["type"]));
+		$this->tpl->setVariable("VAL_TYPE", $this->plugin->txt("menu_t_".$a_set["it_type"]));
 		$this->tpl->setVariable("VAL_TITLE",
-			lfCustomMenu::lookupTitle("mn", $a_set["id"], $ilUser->getLanguage(), true));
+			lfCustomMenu::getItemPresentationTitle($a_set["id"], $a_set["it_type"], $a_set["ref_id"], $ilUser->getLanguage(), $a_set["feature_id"]));
 		
 		if ($a_set["active"])
 		{

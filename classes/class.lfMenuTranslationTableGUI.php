@@ -69,7 +69,7 @@ class lfMenuTranslationTableGUI extends ilTable2GUI
 	{
 		global $lng;
 
-		if ($this->menu_item["it_type"] == lfCustomMenu::ITEM_TYPE_URL)
+		if ($this->menu_item != null && $this->menu_item["it_type"] == lfCustomMenu::ITEM_TYPE_URL)
 		{
 			$this->tpl->setCurrentBlock("target");
 			$this->tpl->setVariable("TLANG", $l);
@@ -86,7 +86,7 @@ class lfMenuTranslationTableGUI extends ilTable2GUI
 		$this->tpl->setVariable("LANG", $l);
 
 		$this->tpl->setVariable("VAL",
-			ilUtil::prepareFormOutput(lfCustomMenu::lookupTitle($this->type, $this->id, $l)));
+			ilUtil::prepareFormOutput(lfCustomMenu::lookupTitle("it", $this->id, $l)));
 	}
 
 }
