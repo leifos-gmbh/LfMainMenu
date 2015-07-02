@@ -162,7 +162,7 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 						$this->getPluginObject()->includeClass("class.lfGroupedListGUI.php");
 						$gl = new lfGroupedListGUI($this->getPluginObject());
 						$gl->setAsDropDown(true);
-	
+
 	//					var_dump($menu);
 						$cust_done = false;
 						if (count($items) > 0)
