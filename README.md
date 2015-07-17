@@ -1,6 +1,8 @@
 # LfMainMenu
 
 Fully configurable ILIAS main menu. Latest version needs ILIAS 5.0.3+ (current git version) or higher.
+
+Features
 - Custom menus and submenus(!)
 - Standard menus "Personal Desktop", "Repository" and "Administration"
 - Separators
