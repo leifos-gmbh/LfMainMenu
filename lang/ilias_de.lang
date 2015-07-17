@@ -3,53 +3,52 @@
 //
 
 <!-- language file start -->
-featured_courses#:#Featured Courses
 nr#:#Nr
-add_item#:#Add Item
-really_delete#:#Do you really want to delete the following items?
-update_numbering#:#Update Ordering
-add_menu#:#Add Menu
-menus#:#Menus
-new_menu#:#New Menu
-menu_type#:#Menu Type
-menu_t_7#:#Custom
-menu_t_8#:#Personal Desktop
-menu_t_9#:#Repository
+add_item#:#Neuer Eintrag
+really_delete#:#Sollen die folgenden Einträge wirklich gelöscht werden?
+update_numbering#:#Sortierung aktualisieren
+add_menu#:#Neuer Eintrag
+menus#:#Menüs
+new_menu#:#Neues Menü
+menu_type#:#Typ
+menu_t_7#:#Angepasst
+menu_t_8#:#Persönlicher Schreibtisch
+menu_t_9#:#Magazin
 access_check_ref_id#:#Access Check: Ref ID
-permission#:#Access Check: Permission
-edit_title#:#Edit Title
-edit_items#:#Edit Items
-edit_menu#:#Edit Menu
-menu_items#:#Menu Items
-add_menu_item#:#Add Menu Item
-new_menu_item#:#New Menu Item
+permission#:#Rechte-Check: Berechtigung
+edit_title#:#Titel bearbeiten
+edit_items#:#Einträge bearbeiten
+edit_menu#:#Menü bearbeiten
+menu_items#:#Einträge
+add_menu_item#:#Neuer Eintrag
+new_menu_item#:#Neuer Eintrag
 target#:#URL
-all_menus#:#All Menus
-edit_menu_item#:#Edit Menu Item
-default_language#:#Default Language
-menu_type_info_7#:#A custom menu contains any items that link to URLs or ILIAS ressources.
-menu_type_info_8#:#This adds the standard ILIAS personal desktop menu. You can only add it one time to your menu list.
-menu_type_info_8#:#This adds the standard ILIAS repository menu. You can only add it one time to your menu list.
-menu_title#:#Menu Title
-access_check_ref_id_info#:#Ref ID of the ILIAS ressource that determines whether the menu should be shown or not. Leave empty, if the menu should be displayed always. You find Ref IDs in the URL of ILIAS ressources as a parameter ref_id.
-access_check_permission_info#:#Permission that is checked (Only if a Ref ID is given).
-translations#:#Translations
-menu_p_mode_0#:#Public and Non-Public Area
-menu_p_mode_1#:#Non-Public Area Only
-menu_p_mode_2#:#Public Area Only
-visibility#:#Visibility
-item_type#:#Type
-#:#Ref ID
-separator#:#Separator
-append_lv#:#Append Last Visited
-newwin#:#Open in new tab/window
-#:#Feature
+all_menus#:#All Menüs
+edit_menu_item#:#Eintrag bearbeiten
+default_language#:#Standardsprache
+menu_type_info_7#:#Hier können beliebige Menüeinträge hinzugefügt werden.
+menu_type_info_8#:#Das Standardmenü "Persönlicher Schreibtisch" von ILIAS.
+menu_type_info_9#:#Das Standardmenü "Magazin" von ILIAS.
+menu_title#:#Titel
+access_check_ref_id_info#:#Ref-ID der ILIAS Resource, die für den Rechtecheck genutzt werden soll. Ref-IDs finden Sie in der URL der entsprechenden Resource als Parameter.
+access_check_permission_info#:#Berechtigung, die geprüft wird. (Ref-ID muss gesetzt sein)
+translations#:#Übersetzungen
+menu_p_mode_0#:#Öffentlicher und nicht-öffentlicher Bereich
+menu_p_mode_1#:#Nicht-öffentlicher Bereich
+menu_p_mode_2#:#Öffentlicher Bereich
+visibility#:#Sichtbarkeit
+item_type#:#Typ
+ref_id#:#Ref-ID
+separator#:#Begrenzer
+append_lv#:#"Zuletzt besucht" anhängen
+newwin#:#In neuem Tab/Fenster öffnen
+feature#:#Feature
 submenu#:#Untermenü
 administration#:#Administration
 menu_t_0#:#URL
 menu_t_1#:#Ref ID
-menu_t_2#:#Last Visited
-menu_t_3#:#Separator
+menu_t_2#:#Zuletzt besucht
+menu_t_3#:#Begrenzer
 menu_t_4#:#Feature
-menu_t_5#:#Submenu
+menu_t_5#:#Untermenü
 menu_t_6#:#Administration
