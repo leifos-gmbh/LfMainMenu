@@ -15,5 +15,7 @@ Installation
 - Extract content into a subdirectory Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/LfMainMenu within your main ILIAS directory
 - Enter ILIAS Administration > Plugins and activate/configure the plugin
  
+Screenshot
+
 <img src="http://www.ilias.de/docu/data/docu/mobs/mm_45170/Bildschirmfoto_2015-07-17_um_14.29.38.png" />
 
