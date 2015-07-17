@@ -26,11 +26,17 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 
 		$this->getPluginObject()->includeClass("class.lfCustomMenu.php");
 		$this->menu_id = ($_GET["menu_id"]);
+		$this->item_id = ($_GET["item_id"]);
+		if ($this->item_id > 0)
+		{
+			$this->item = lfCustomMenu::getMenuItem($this->item_id);
+			$this->menu_id = $this->item["menu_id"];
+		}
 		if ($this->menu_id > 0)
 		{
 			$this->menu = lfCustomMenu::getMenu($this->menu_id);
 		}
-		
+
 		switch ($cmd)
 		{
 			default:
@@ -521,8 +527,7 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		$type->addOption($lv);
 
 		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_SEPARATOR, $type);
-
-		if ($this->menu_id == 0 || $this->menu["it_type"] != lfCustomMenu::ITEM_TYPE_SUBMENU)
+		if ($this->menu_id == 0 || ($this->menu["it_type"] != lfCustomMenu::ITEM_TYPE_SUBMENU))
 		{
 			$sub = new ilRadioOption($this->getPluginObject()->txt("submenu"), lfCustomMenu::ITEM_TYPE_SUBMENU,
 				"");
