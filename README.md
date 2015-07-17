@@ -9,3 +9,8 @@ Fully configurable ILIAS main menu. Latest version needs ILIAS 5.0.3+ (current g
 - "Last Visited" integration
 - Multilinguality
 - Custom URLs and permission checks
+ 
+Installation
+- Download the zip file
+- Extract content into a subdirectory Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/LfMainMenu within your main ILIAS directory
+- Enter ILIAS Administration > Plugins and activate/configure the plugin
