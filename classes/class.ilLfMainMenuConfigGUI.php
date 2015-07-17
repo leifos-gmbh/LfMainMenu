@@ -13,6 +13,8 @@ include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
  */
 class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 {
+	protected $menu_id;
+
 	/**
 	* Handles all commmands, default is "configure"
 	*/
@@ -21,6 +23,13 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		global $ilCtrl;
 		
 		$ilCtrl->saveParameter($this, "menu_id");
+
+		$this->getPluginObject()->includeClass("class.lfCustomMenu.php");
+		$this->menu_id = ($_GET["menu_id"]);
+		if ($this->menu_id > 0)
+		{
+			$this->menu = lfCustomMenu::getMenu($this->menu_id);
+		}
 		
 		switch ($cmd)
 		{
@@ -382,9 +391,20 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 
 		$ilToolbar->addButton($this->getPluginObject()->txt("add_menu_item"),
 			$ilCtrl->getLinkTarget($this, "addMenuItem"));
-		
-		$ilTabs->setBackTarget($this->getPluginObject()->txt("all_menus"),
-			$ilCtrl->getLinkTarget($this, "configure"));
+
+		if ($this->menu_id != 0 && $this->menu["it_type"] == lfCustomMenu::ITEM_TYPE_SUBMENU)
+		{
+//var_dump($this->menu); exit;
+			$ilCtrl->setParameter($this, "menu_id", $this->menu["menu_id"]);
+			$ilTabs->setBackTarget($this->getPluginObject()->txt("all_menus"),
+				$ilCtrl->getLinkTarget($this, "listItems"));
+			$ilCtrl->setParameter($this, "menu_id", $_GET["menu_id"]);
+		}
+		else
+		{
+			$ilTabs->setBackTarget($this->getPluginObject()->txt("all_menus"),
+				$ilCtrl->getLinkTarget($this, "configure"));
+		}
 
 		$this->getPluginObject()->includeClass("class.lfMenuItemsTableGUI.php");
 		$table = new lfMenuItemsTableGUI($this, "listItems", $this->getPluginObject(),
@@ -502,9 +522,12 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 
 		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_SEPARATOR, $type);
 
-		$sub = new ilRadioOption($this->getPluginObject()->txt("submenu"), lfCustomMenu::ITEM_TYPE_SUBMENU,
-			"");
-		$type->addOption($sub);
+		if ($this->menu_id == 0 || $this->menu["it_type"] != lfCustomMenu::ITEM_TYPE_SUBMENU)
+		{
+			$sub = new ilRadioOption($this->getPluginObject()->txt("submenu"), lfCustomMenu::ITEM_TYPE_SUBMENU,
+				"");
+			$type->addOption($sub);
+		}
 
 		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_ADMIN, $type, $item);
 

@@ -388,3 +388,15 @@ while ($r = $ilDB->fetchAssoc($set))
 	}
 }
 ?>
+<#26>
+<?php
+$set = $ilDB->query("SELECT * FROM ui_uihk_lfmainmenu_it WHERE submenu_id > 0");
+while ($r = $ilDB->fetchAssoc($set))
+{
+	$ilDB->manipulate("UPDATE ui_uihk_lfmainmenu_it SET ".
+		" menu_id = ".$ilDB->quote($r["id"], "integer").
+		" WHERE menu_id = ".$ilDB->quote($r["submenu_id"], "integer")
+		);
+}
+
+?>

@@ -45,9 +45,9 @@ class lfCustomMenu
 			"uihk", "LfMainMenu");
 		
 		return array(
-			self::T_CUSTOM => $pl->txt("menu_t_custom"),
-			self::T_PD => $pl->txt("menu_t_pd"),
-			self::T_REP => $pl->txt("menu_t_rep")
+			self::T_CUSTOM => $pl->txt("menu_t_7"),
+			self::T_PD => $pl->txt("menu_t_8"),
+			self::T_REP => $pl->txt("menu_t_9")
 			);
 	}
 	
@@ -280,7 +280,7 @@ class lfCustomMenu
 
 		if ($a_type == self::ITEM_TYPE_SUBMENU)
 		{
-			$submenu_id = self::addMenu("", self::T_SUBMENU, 0, "", 0);
+//			$submenu_id = self::addMenu("", self::T_SUBMENU, 0, "", 0);
 		}
 
 		$nid = $ilDB->nextId("ui_uihk_lfmainmenu_it");

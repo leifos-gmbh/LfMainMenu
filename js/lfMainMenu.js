@@ -11,7 +11,7 @@ $(function () {
 		// Avoid having the menu to close when clicking
 		event.stopPropagation();
 		// If a menu is already open we close it
-		//$('ul.dropdown-menu [data-toggle=dropdown]').parent().removeClass('open');
+		$('ul.dropdown-menu [data-toggle=dropdown]').parent().removeClass('open');
 		// opening the one you clicked on
 		$(this).parent().addClass('open');
 

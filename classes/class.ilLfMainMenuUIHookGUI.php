@@ -466,9 +466,9 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 			// submenu
 			if ($item["it_type"] == lfCustomMenu::ITEM_TYPE_SUBMENU)
 			{
-				$sm = $gl->addSubmenu($item["submenu_id"], lfCustomMenu::getItemPresentationTitle($item["id"], $item["it_type"],
+				$sm = $gl->addSubmenu($item["id"], lfCustomMenu::getItemPresentationTitle($item["id"], $item["it_type"],
 						$item["ref_id"], $ilUser->getLanguage(), $item["full_id"]));
-				$items = lfCustomMenu::getMenuItems($item["submenu_id"]);
+				$items = lfCustomMenu::getMenuItems($item["id"]);
 				if ($this->addMenuItems($sm, $items))
 				{
 					$cust_done = true;

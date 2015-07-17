@@ -109,7 +109,7 @@ class lfMenuItemsTableGUI extends ilTable2GUI
 		if ($a_set["it_type"] == lfCustomMenu::ITEM_TYPE_SUBMENU)
 		{
 //var_dump($a_set);
-			$ilCtrl->setParameter($this->parent_obj, "menu_id", $a_set["submenu_id"]);
+			$ilCtrl->setParameter($this->parent_obj, "menu_id", $a_set["id"]);
 			$this->tpl->setCurrentBlock("cmd");
 			$this->tpl->setVariable("HREF_CMD",
 				$ilCtrl->getLinkTarget($this->parent_obj, "listItems"));
