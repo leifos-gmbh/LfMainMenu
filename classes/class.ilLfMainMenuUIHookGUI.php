@@ -337,7 +337,7 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 	 */
 	function addMenuItems($gl, $items)
 	{
-		global $ilUser, $lng;
+		global $ilUser, $lng, $ilAccess;
 
 		$cust_done = false;
 		foreach ($items as $item)
