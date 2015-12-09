@@ -22,6 +22,7 @@ class lfCustomMenusTableGUI extends ilTable2GUI
 		global $ilCtrl, $lng, $ilAccess, $lng;
 
 		$this->plugin = $a_plugin;
+		$this->setId("cmenus");
 
 		parent::__construct($a_parent_obj, $a_parent_cmd);
 		$this->setData($this->getMenus());

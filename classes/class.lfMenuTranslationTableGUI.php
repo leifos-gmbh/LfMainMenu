@@ -21,10 +21,12 @@ class lfMenuTranslationTableGUI extends ilTable2GUI
 		$a_type, $a_id)
 	{
 		global $ilCtrl, $lng, $ilAccess, $lng;
-		
+
+		$this->setId("cmenutrans");
+
 		$this->plugin = $a_plugin;
 		$this->type = $a_type;
-		$this->id = $a_id;
+		$this->item_id = $a_id;
 		
 		$this->plugin->includeClass("class.lfCustomMenu.php");
 		
@@ -86,7 +88,7 @@ class lfMenuTranslationTableGUI extends ilTable2GUI
 		$this->tpl->setVariable("LANG", $l);
 
 		$this->tpl->setVariable("VAL",
-			ilUtil::prepareFormOutput(lfCustomMenu::lookupTitle("it", $this->id, $l)));
+			ilUtil::prepareFormOutput(lfCustomMenu::lookupTitle("it", $this->item_id, $l)));
 	}
 
 }
