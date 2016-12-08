@@ -174,7 +174,7 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function activateMenu($a_id, $a_active)
+	static function activateMenu($a_id, $a_active)
 	{
 		global $ilDB;
 		
@@ -219,7 +219,7 @@ class lfCustomMenu
 	 *
 	 * @param
 	 */
-	function updateMenuItemTarget($a_id, $a_target)
+	static function updateMenuItemTarget($a_id, $a_target)
 	{
 		global $ilDB;
 
@@ -320,7 +320,7 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function deleteItem($a_id)
+	static function deleteItem($a_id)
 	{
 		global $ilDB;
 
@@ -335,7 +335,7 @@ class lfCustomMenu
 	 *
 	 * @return	int		max number
 	 */
-	function getMaxItemNr($a_menu_id)
+	static function getMaxItemNr($a_menu_id)
 	{
 		global $ilDB;
 
@@ -351,7 +351,7 @@ class lfCustomMenu
 	 *
 	 * @return	int		max number
 	 */
-	function getMaxMenuNr()
+	static function getMaxMenuNr()
 	{
 		global $ilDB;
 
@@ -385,7 +385,7 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function deleteMenu($a_id)
+	static function deleteMenu($a_id)
 	{
 		global $ilDB;
 
@@ -404,7 +404,7 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function fixNumbering()
+	static function fixNumbering()
 	{
 		global $ilDB;
 
@@ -428,7 +428,7 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function setNumbering($a_nr)
+	static function setNumbering($a_nr)
 	{
 		global $ilDB;
 
@@ -449,7 +449,7 @@ class lfCustomMenu
 	 *
 	 * @param
 	 */
-	function fixItemNumbering($a_menu_id)
+	static function fixItemNumbering($a_menu_id)
 	{
 		global $ilDB;
 
@@ -474,7 +474,7 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function setItemNumbering($a_nr)
+	static function setItemNumbering($a_nr)
 	{
 		global $ilDB;
 
@@ -612,7 +612,7 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function deleteLDTargets($a_item_id)
+	static function deleteLDTargets($a_item_id)
 	{
 		global $ilDB;
 		
@@ -627,7 +627,7 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function getLDTargets($a_item_id)
+	static function getLDTargets($a_item_id)
 	{
 		global $ilDB, $lng;
 		
@@ -656,7 +656,7 @@ class lfCustomMenu
 	 * @param
 	 * @return
 	 */
-	function setLDTargets($a_item_id, $a_targets)
+	static function setLDTargets($a_item_id, $a_targets)
 	{
 		global $ilDB, $lng;
 		
