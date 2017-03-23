@@ -39,10 +39,14 @@ class lfMMEPayment extends lfMainMenuEntryProvider
 	 */
 	public function getFeatures()
 	{
-		return array(
-			self::SHOP => $this->lng->txt("shop"),
-			self::CART => $this->lng->txt("shoppingcart")
-		);
+		if (is_dir("./Services/Payment"))	// only in ILIAS < 5.1
+		{
+			return array(
+				self::SHOP => $this->lng->txt("shop"),
+				self::CART => $this->lng->txt("shoppingcart")
+			);
+		}
+		return array();
 	}
 
 	/**

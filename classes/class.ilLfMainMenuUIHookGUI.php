@@ -64,7 +64,7 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 			switch ($menu["it_type"])
 			{
 				case lfCustomMenu::ITEM_TYPE_PD_MENU:
-					if ($_SESSION["AccountId"] != ANONYMOUS_USER_ID)
+					if ($ilUser->getId() != ANONYMOUS_USER_ID)
 					{
 						if (!$pd_done)
 						{
@@ -88,7 +88,7 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 					break;
 					
 				case lfCustomMenu::ITEM_TYPE_REP_MENU:
-					if ($_SESSION["AccountId"] == ANONYMOUS_USER_ID)
+					if ($ilUser->getId() == ANONYMOUS_USER_ID)
 					{
 						if ($menu["pmode"] == lfCustomMenu::PMODE_NONPUBLIC_ONLY)
 						{
@@ -102,7 +102,6 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 							continue;
 						}
 					}
-
 					if (!$rep_done)
 					{
 						if (is_file("./classes/class.ilLink.php"))
@@ -119,25 +118,22 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 						$title = lfCustomMenu::getItemPresentationTitle($menu["id"], $menu["it_type"],
 							0, $ilUser->getLanguage(), $menu["full_id"]);
 
-						if ($_SESSION["AccountId"] != ANONYMOUS_USER_ID)
-						{
-							$mm_gui->renderEntry($tpl, "repository",
-								$title, "#");
-							include_once("./Services/UIComponent/Overlay/classes/class.ilOverlayGUI.php");
+						$mm_gui->renderEntry($tpl, "repository",
+							$title, "#");
+						include_once("./Services/UIComponent/Overlay/classes/class.ilOverlayGUI.php");
 /*							$ov = new ilOverlayGUI("mm_rep_ov");
-							$ov->setTrigger("mm_rep_tr");
-							$ov->setAnchor("mm_rep_tr");
-							$ov->setAutoHide(false);
-							$ov->add();*/
-							$tpl->setCurrentBlock("c_item");
-							$tpl->parseCurrentBlock();
-						}
+						$ov->setTrigger("mm_rep_tr");
+						$ov->setAnchor("mm_rep_tr");
+						$ov->setAutoHide(false);
+						$ov->add();*/
+						$tpl->setCurrentBlock("c_item");
+						$tpl->parseCurrentBlock();
 					}
 					$rep_done = true;
 					break;
 					
 				case lfCustomMenu::ITEM_TYPE_CUSTOM_MENU:
-					if ($_SESSION["AccountId"] == ANONYMOUS_USER_ID)
+					if ($ilUser->getId() == ANONYMOUS_USER_ID)
 					{
 						if ($menu["pmode"] == lfCustomMenu::PMODE_NONPUBLIC_ONLY)
 						{
@@ -204,7 +200,7 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 					break;
 
 				case lfCustomMenu::ITEM_TYPE_FEATURE:
-					if ($_SESSION["AccountId"] == ANONYMOUS_USER_ID)
+					if ($ilUser->getId() == ANONYMOUS_USER_ID)
 					{
 						if ($menu["pmode"] == lfCustomMenu::PMODE_NONPUBLIC_ONLY)
 						{
@@ -235,7 +231,7 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 
 				case lfCustomMenu::ITEM_TYPE_URL:
 				case lfCustomMenu::ITEM_TYPE_REF_ID:
-					if ($_SESSION["AccountId"] == ANONYMOUS_USER_ID)
+					if ($ilUser->getId() == ANONYMOUS_USER_ID)
 					{
 						if ($menu["pmode"] == lfCustomMenu::PMODE_NONPUBLIC_ONLY)
 						{
@@ -342,7 +338,7 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 		$cust_done = false;
 		foreach ($items as $item)
 		{
-			if ($_SESSION["AccountId"] == ANONYMOUS_USER_ID)
+			if ($ilUser->getId() == ANONYMOUS_USER_ID)
 			{
 				if ($item["pmode"] == lfCustomMenu::PMODE_NONPUBLIC_ONLY)
 				{
@@ -429,7 +425,7 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 
 			// last visited items
 			if ($item["it_type"] == lfCustomMenu::ITEM_TYPE_LAST_VISITED &&
-				$_SESSION["AccountId"] != ANONYMOUS_USER_ID)
+				$ilUser->getId() != ANONYMOUS_USER_ID)
 			{
 				global $ilNavigationHistory;
 				$nav_items = $ilNavigationHistory->getItems();
