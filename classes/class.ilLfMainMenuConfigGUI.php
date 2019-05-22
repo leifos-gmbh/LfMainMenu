@@ -203,7 +203,10 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 			}
 			$acc_perm->setValue($menu["acc_perm"]);
 			$pmode->setValue($menu["pmode"]);
-			$alv->setChecked($menu["append_last_visited"]);
+			if (is_object($alv))
+			{
+				$alv->setChecked($menu["append_last_visited"]);
+			}
 			$ti->setValue(lfCustomMenu::lookupTitle("it", $_GET["menu_id"],
 				$lng->getDefaultLanguage()));
 		}
