@@ -23,6 +23,20 @@ abstract class lfMainMenuEntryProvider
 	}
 
 	/**
+	 * is_5_4
+	 *
+	 * @return bool
+	 */
+	protected function is_5_4()
+	{
+		if (substr(ILIAS_VERSION_NUMERIC, 0, 3) == "5.4")
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Get service title
 	 *
 	 * @return string service title

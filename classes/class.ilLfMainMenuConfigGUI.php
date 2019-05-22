@@ -97,6 +97,20 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 	}
 
 	/**
+	 * is_5_4
+	 *
+	 * @return bool
+	 */
+	protected function is_5_4()
+	{
+		if (substr(ILIAS_VERSION_NUMERIC, 0, 3) == "5.4")
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Init  form.
 	 *
 	 * @param        int        $a_mode        Edit Mode
@@ -134,6 +148,10 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		$type = new ilRadioGroupInputGUI($this->getPluginObject()->txt("menu_type"), "type");
 		foreach (lfCustomMenu::getMenuTypes() as $t => $l)
 		{
+			if ($this->is_5_4() && $t == lfCustomMenu::T_PD)
+			{
+				continue;
+			}
 			$type_opt[$t] = new ilRadioOption($l, $t,
 				$this->getPluginObject()->txt("menu_type_info_".$t));
 			$type->addOption($type_opt[$t]);
@@ -158,10 +176,13 @@ class ilLfMainMenuConfigGUI extends ilPluginConfigGUI
 		$acc_perm->setValue("read");
 		$type_opt[lfCustomMenu::ITEM_TYPE_CUSTOM_MENU]->addSubItem($acc_perm);
 		
-		// append lv 
-		$alv = new ilCheckboxInputGUI($this->getPluginObject()->txt("append_lv"),
-			"append_lv");
-		$type_opt[lfCustomMenu::ITEM_TYPE_PD_MENU]->addSubItem($alv);
+		// append lv
+		if (!$this->is_5_4())
+		{
+			$alv = new ilCheckboxInputGUI($this->getPluginObject()->txt("append_lv"),
+				"append_lv");
+			$type_opt[lfCustomMenu::ITEM_TYPE_PD_MENU]->addSubItem($alv);
+		}
 
 		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_SEPARATOR, $type, $menu);
 		$this->addTypeOption(lfCustomMenu::ITEM_TYPE_FEATURE, $type, $menu);

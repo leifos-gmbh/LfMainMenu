@@ -78,6 +78,10 @@ class lfMMETracking extends lfMainMenuEntryProvider
 		switch ($a_id)
 		{
 			case self::LEARNING_PROGRESS:
+				if ($this->is_5_4())
+				{
+					return $this->ctrl->getLinkTargetByClass(["ilPersonalDesktopGUI", "ilAchievementsGUI", "ilLearningProgressGUI"]);
+				}
 				return $this->ctrl->getLinkTargetByClass("ilpersonaldesktopgui", "jumpToLP");
 				break;
 		}

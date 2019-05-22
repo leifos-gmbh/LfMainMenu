@@ -76,6 +76,10 @@ class lfMMESkill extends lfMainMenuEntryProvider
 		switch ($a_id)
 		{
 			case self::MY_COMPETENCES:
+				if ($this->is_5_4())
+				{
+					return $this->ctrl->getLinkTargetByClass(["ilPersonalDesktopGUI", "ilAchievementsGUI", "ilPersonalSkillsGUI"]);
+				}
 				return $this->ctrl->getLinkTargetByClass("ilpersonaldesktopgui", "jumpToSkills");
 				break;
 		}
