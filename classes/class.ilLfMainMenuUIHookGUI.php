@@ -178,14 +178,14 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 					{
 						if ($menu["pmode"] == lfCustomMenu::PMODE_NONPUBLIC_ONLY)
 						{
-							continue;
+							continue 2;
 						}
 					}
 					else
 					{
 						if ($menu["pmode"] == lfCustomMenu::PMODE_PUBLIC_ONLY)
 						{
-							continue;
+							continue 2;
 						}
 					}
 
